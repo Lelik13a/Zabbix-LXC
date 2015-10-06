@@ -1,0 +1,7 @@
+#zabbix
+Cmnd_Alias MON_LXC = /etc/zabbix/lxcdiscover.pl, /usr/bin/lxc-info *, /usr/bin/lxc-attach *
+Defaults:zabbix !requiretty
+Defaults:zabbix !syslog
+
+zabbix ALL = NOPASSWD: MON_LXC
+
