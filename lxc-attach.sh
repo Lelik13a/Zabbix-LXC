@@ -4,6 +4,9 @@ if [[ x$2 = "x" ]]; then COMMAND="df"; else COMMAND=$2; fi
 
 HOSTNAME=$(hostname)
 CTID=$(echo $1 | sed "s/${HOSTNAME}.//")
+STATUS=$(/usr/bin/sudo /usr/bin/lxc-info -s -n $CTID | awk '{print $2}')
+
+if [[ $STATUS = "STOPPED" ]]; then exit 0; fi
 
 case $COMMAND in
 "df")
