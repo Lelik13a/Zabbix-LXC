@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>2.0</version>
-    <date>2015-10-06T06:36:01Z</date>
+    <date>2015-12-16T05:42:58Z</date>
     <groups>
         <group>
             <name>LXC</name>
@@ -29,6 +29,9 @@
                 </application>
                 <application>
                     <name>Disk</name>
+                </application>
+                <application>
+                    <name>External check</name>
                 </application>
                 <application>
                     <name>Main</name>
@@ -914,7 +917,7 @@
                 </macro>
                 <macro>
                     <macro>{$PROC_CT_WARN}</macro>
-                    <value>90</value>
+                    <value>100</value>
                 </macro>
                 <macro>
                     <macro>{$PROC_WARN}</macro>
@@ -947,8 +950,8 @@
             <dependencies/>
         </trigger>
         <trigger>
-            <expression>{Template LXC CT:lxc.ct.failmemsw[{HOST.HOST}].last()}&gt;0</expression>
-            <name>Memory + swap allocations fault</name>
+            <expression>{Template LXC CT:lxc.ct.failmemsw[{HOST.HOST}].last()}&gt;0 and {Template LXC CT:lxc.ct.failmemsw[{HOST.HOST}].delta(86400)} &gt; 0</expression>
+            <name>Memory + swap allocations fault ({ITEM.VALUE1})</name>
             <url/>
             <status>0</status>
             <priority>2</priority>
@@ -957,8 +960,18 @@
             <dependencies/>
         </trigger>
         <trigger>
-            <expression>{Template LXC CT:lxc.ct.failmem[{HOST.HOST}].last()}&gt;0</expression>
-            <name>Memory allocations fault</name>
+            <expression>{Template LXC CT:lxc.ct.failmem[{HOST.HOST}].last()} &gt; 0 and {Template LXC CT:lxc.ct.failmem[{HOST.HOST}].delta(28800)} &gt; 0</expression>
+            <name>Memory allocations fault ({ITEM.VALUE1})</name>
+            <url/>
+            <status>1</status>
+            <priority>2</priority>
+            <description/>
+            <type>0</type>
+            <dependencies/>
+        </trigger>
+        <trigger>
+            <expression>{Template LXC CT:lxc.ct.status[{HOST.HOST}].diff()}=1</expression>
+            <name>Status changed</name>
             <url/>
             <status>0</status>
             <priority>2</priority>
@@ -968,7 +981,7 @@
         </trigger>
         <trigger>
             <expression>{Template LXC CT:lxc.ct.usedproc[{HOST.HOST}].last()} &gt; {$PROC_CT_WARN}</expression>
-            <name>Too many processes (over {$PROC_CT_WARN})</name>
+            <name>Too many processes ({ITEM.VALUE1} / {$PROC_CT_WARN})</name>
             <url/>
             <status>0</status>
             <priority>2</priority>
@@ -978,6 +991,118 @@
         </trigger>
     </triggers>
     <graphs>
+        <graph>
+            <name>Memory + swap usage</name>
+            <width>900</width>
+            <height>200</height>
+            <yaxismin>0.0000</yaxismin>
+            <yaxismax>100.0000</yaxismax>
+            <show_work_period>1</show_work_period>
+            <show_triggers>1</show_triggers>
+            <type>0</type>
+            <show_legend>1</show_legend>
+            <show_3d>0</show_3d>
+            <percent_left>0.0000</percent_left>
+            <percent_right>0.0000</percent_right>
+            <ymin_type_1>0</ymin_type_1>
+            <ymax_type_1>0</ymax_type_1>
+            <ymin_item_1>0</ymin_item_1>
+            <ymax_item_1>0</ymax_item_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>0</sortorder>
+                    <drawtype>5</drawtype>
+                    <color>00C800</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template LXC CT</host>
+                        <key>lxc.ct.usedmemsw[{HOST.HOST}]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>2</drawtype>
+                    <color>0000EE</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template LXC CT</host>
+                        <key>lxc.ct.maxmemsw[{HOST.HOST}]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <drawtype>4</drawtype>
+                    <color>DD0000</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template LXC CT</host>
+                        <key>lxc.ct.limmemsw[{HOST.HOST}]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>Memory usage</name>
+            <width>900</width>
+            <height>200</height>
+            <yaxismin>0.0000</yaxismin>
+            <yaxismax>100.0000</yaxismax>
+            <show_work_period>1</show_work_period>
+            <show_triggers>1</show_triggers>
+            <type>0</type>
+            <show_legend>1</show_legend>
+            <show_3d>0</show_3d>
+            <percent_left>0.0000</percent_left>
+            <percent_right>0.0000</percent_right>
+            <ymin_type_1>0</ymin_type_1>
+            <ymax_type_1>0</ymax_type_1>
+            <ymin_item_1>0</ymin_item_1>
+            <ymax_item_1>0</ymax_item_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>0</sortorder>
+                    <drawtype>5</drawtype>
+                    <color>00C800</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template LXC CT</host>
+                        <key>lxc.ct.usedmem[{HOST.HOST}]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <drawtype>2</drawtype>
+                    <color>0000EE</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template LXC CT</host>
+                        <key>lxc.ct.maxmem[{HOST.HOST}]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <drawtype>4</drawtype>
+                    <color>DD0000</color>
+                    <yaxisside>0</yaxisside>
+                    <calc_fnc>2</calc_fnc>
+                    <type>0</type>
+                    <item>
+                        <host>Template LXC CT</host>
+                        <key>lxc.ct.limmem[{HOST.HOST}]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
         <graph>
             <name>Traffic in container</name>
             <width>900</width>
