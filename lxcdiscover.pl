@@ -11,7 +11,8 @@ my $VEname = `hostname`;
 #cut end string
 $VEname = substr($VEname, 0, -1);
 
-my $lxcresult = `/usr/bin/lxc-ls`;
+#my $lxcresult = `/usr/bin/lxc-ls -1`;
+my $lxcresult = `/usr/bin/find /sys/fs/cgroup/cpuacct/lxc/ -maxdepth 1 -mindepth 1 -type d -printf '%f\n'`;
 
 my @lines = split /\n/, $lxcresult;
 foreach my $l (@lines) {
